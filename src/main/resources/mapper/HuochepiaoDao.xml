@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HuochepiaoDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.huochepiao_name as huochepiaoName
+        ,a.huochepiao_types as huochepiaoTypes
+        ,a.huochepiao_xinghao_types as huochepiaoXinghaoTypes
+        ,a.huochepiao_chufadi as huochepiaoChufadi
+        ,a.huochepiao_mudidi as huochepiaoMudidi
+        ,a.huochepiao_photo as huochepiaoPhoto
+        ,a.huochepiao_time as huochepiaoTime
+        ,a.huochepiao_new_money as huochepiaoNewMoney
+        ,a.huochepiao_content as huochepiaoContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.HuochepiaoView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM huochepiao  a
+
+        <where>
+            <if test=" params.huochepiaoName != '' and params.huochepiaoName != null and params.huochepiaoName != 'null' ">
+                and a.huochepiao_name like CONCAT('%',#{params.huochepiaoName},'%')
+            </if>
+            <if test="params.huochepiaoTypes != null">
+                and a.huochepiao_types = #{params.huochepiaoTypes}
+            </if>
+            <if test="params.huochepiaoXinghaoTypes != null">
+                and a.huochepiao_xinghao_types = #{params.huochepiaoXinghaoTypes}
+            </if>
+            <if test=" params.huochepiaoChufadi != '' and params.huochepiaoChufadi != null and params.huochepiaoChufadi != 'null' ">
+                and a.huochepiao_chufadi like CONCAT('%',#{params.huochepiaoChufadi},'%')
+            </if>
+            <if test=" params.huochepiaoMudidi != '' and params.huochepiaoMudidi != null and params.huochepiaoMudidi != 'null' ">
+                and a.huochepiao_mudidi like CONCAT('%',#{params.huochepiaoMudidi},'%')
+            </if>
+            <if test=" params.huochepiaoTime != '' and params.huochepiaoTime != null and params.huochepiaoTime != 'null' ">
+                and a.huochepiao_time like CONCAT('%',#{params.huochepiaoTime},'%')
+            </if>
+            <if test="params.huochepiaoNewMoneyStart != null">
+                <![CDATA[  and a.huochepiao_new_money >= #{params.huochepiaoNewMoneyStart}   ]]>
+            </if>
+            <if test="params.huochepiaoNewMoneyEnd != null">
+                <![CDATA[  and a.huochepiao_new_money <= #{params.huochepiaoNewMoneyEnd}   ]]>
+            </if>
+            <if test=" params.huochepiaoContent != '' and params.huochepiaoContent != null and params.huochepiaoContent != 'null' ">
+                and a.huochepiao_content like CONCAT('%',#{params.huochepiaoContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

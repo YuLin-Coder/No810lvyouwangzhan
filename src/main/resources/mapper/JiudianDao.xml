@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JiudianDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jiudian_name as jiudianName
+        ,a.jiudian_types as jiudianTypes
+        ,a.jiudian_weizhi as jiudianWeizhi
+        ,a.jiudian_photo as jiudianPhoto
+        ,a.jiudian_new_money as jiudianNewMoney
+        ,a.jiudian_content as jiudianContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JiudianView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM jiudian  a
+
+        <where>
+            <if test=" params.jiudianName != '' and params.jiudianName != null and params.jiudianName != 'null' ">
+                and a.jiudian_name like CONCAT('%',#{params.jiudianName},'%')
+            </if>
+            <if test="params.jiudianTypes != null">
+                and a.jiudian_types = #{params.jiudianTypes}
+            </if>
+            <if test=" params.jiudianWeizhi != '' and params.jiudianWeizhi != null and params.jiudianWeizhi != 'null' ">
+                and a.jiudian_weizhi like CONCAT('%',#{params.jiudianWeizhi},'%')
+            </if>
+            <if test="params.jiudianNewMoneyStart != null">
+                <![CDATA[  and a.jiudian_new_money >= #{params.jiudianNewMoneyStart}   ]]>
+            </if>
+            <if test="params.jiudianNewMoneyEnd != null">
+                <![CDATA[  and a.jiudian_new_money <= #{params.jiudianNewMoneyEnd}   ]]>
+            </if>
+            <if test=" params.jiudianContent != '' and params.jiudianContent != null and params.jiudianContent != 'null' ">
+                and a.jiudian_content like CONCAT('%',#{params.jiudianContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

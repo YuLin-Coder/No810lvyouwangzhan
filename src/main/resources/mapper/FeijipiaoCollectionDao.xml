@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.FeijipiaoCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.feijipiao_id as feijipiaoId
+        ,a.yonghu_id as yonghuId
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.FeijipiaoCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,feijipiao.feijipiao_name as feijipiaoName
+        ,feijipiao.feiji_types as feijiTypes
+        ,feijipiao.feijipiao_xinghao_types as feijipiaoXinghaoTypes
+        ,feijipiao.feijipiao_chufadi as feijipiaoChufadi
+        ,feijipiao.feijipiao_mudidi as feijipiaoMudidi
+        ,feijipiao.feijipiao_photo as feijipiaoPhoto
+        ,feijipiao.feijipiao_time as feijipiaoTime
+        ,feijipiao.feijipiao_new_money as feijipiaoNewMoney
+        ,feijipiao.feijipiao_content as feijipiaoContent
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM feijipiao_collection  a
+        left JOIN feijipiao feijipiao ON a.feijipiao_id = feijipiao.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.feijipiaoId != null">
+                and a.feijipiao_id = #{params.feijipiaoId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.insertTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.insertTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+
+            <if test=" params.feijipiaoName != '' and params.feijipiaoName != null and params.feijipiaoName != 'null' ">
+                and feijipiao.feijipiao_name like CONCAT('%',#{params.feijipiaoName},'%')
+            </if>
+            <if test="params.feijiTypes != null">
+                and feijipiao.feiji_types = #{params.feijiTypes}
+            </if>
+
+            <if test="params.feijipiaoXinghaoTypes != null">
+                and feijipiao.feijipiao_xinghao_types = #{params.feijipiaoXinghaoTypes}
+            </if>
+
+            <if test=" params.feijipiaoChufadi != '' and params.feijipiaoChufadi != null and params.feijipiaoChufadi != 'null' ">
+                and feijipiao.feijipiao_chufadi like CONCAT('%',#{params.feijipiaoChufadi},'%')
+            </if>
+            <if test=" params.feijipiaoMudidi != '' and params.feijipiaoMudidi != null and params.feijipiaoMudidi != 'null' ">
+                and feijipiao.feijipiao_mudidi like CONCAT('%',#{params.feijipiaoMudidi},'%')
+            </if>
+            <if test=" params.feijipiaoTime != '' and params.feijipiaoTime != null and params.feijipiaoTime != 'null' ">
+                and feijipiao.feijipiao_time like CONCAT('%',#{params.feijipiaoTime},'%')
+            </if>
+            <if test="params.feijipiaoNewMoneyStart != null ">
+                <![CDATA[  and feijipiao.feijipiao_new_money >= #{params.feijipiaoNewMoneyStart}   ]]>
+            </if>
+            <if test="params.feijipiaoNewMoneyEnd != null ">
+                <![CDATA[  and feijipiao.feijipiao_new_money <= #{params.feijipiaoNewMoneyEnd}   ]]>
+            </if>
+            <if test=" params.feijipiaoContent != '' and params.feijipiaoContent != null and params.feijipiaoContent != 'null' ">
+                and feijipiao.feijipiao_content like CONCAT('%',#{params.feijipiaoContent},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
